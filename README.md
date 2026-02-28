@@ -1,6 +1,6 @@
 # SimpleEdit
 
-A native MacOS clone of Notepadbuilt with Swift and AppKit.
+A native MacOS clone of Notepad built with Swift and AppKit.
 
 ## Features
 - Find/Replace
