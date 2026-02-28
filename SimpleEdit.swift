@@ -1,6 +1,6 @@
 import Cocoa
 
-class NotepadTextView: NSTextView {
+class SimpleEditTextView: NSTextView {
     // Intercept font changes from the NSFontPanel
     override func changeFont(_ sender: Any?) {
         guard let fontManager = sender as? NSFontManager else { return }
@@ -17,15 +17,13 @@ class NotepadTextView: NSTextView {
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSTextViewDelegate {
     var window: NSWindow!
-    var textView: NotepadTextView!
+    var textView: SimpleEditTextView!
     var scrollView: NSScrollView!
     var currentFilePath: URL?
     var autoSaveTimer: Timer?
     
-    var isAutoSaveEnabled: Bool {
-        get { UserDefaults.standard.bool(forKey: "AutoSaveEnabled") }
-        set { 
-            UserDefaults.standard.set(newValue, forKey: "AutoSaveEnabled")
+    var isAutoSaveEnabled: Bool = false {
+        didSet {
             setupAutoSave()
         }
     }
@@ -42,7 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSTextView
         let windowSize = NSSize(width: 800, height: 600)
         let windowRect = NSRect(origin: .zero, size: windowSize)
         window = NSWindow(contentRect: windowRect, styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
-        window.title = "Untitled - Notepad"
+        window.title = "Untitled - SimpleEdit"
         window.center()
         window.delegate = self
         
@@ -54,7 +52,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSTextView
         
         // Setup Text View using our custom subclass
         let contentSize = scrollView.contentSize
-        textView = NotepadTextView(frame: NSRect(origin: .zero, size: contentSize))
+        textView = SimpleEditTextView(frame: NSRect(origin: .zero, size: contentSize))
         textView.minSize = NSSize(width: 0.0, height: contentSize.height)
         textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         textView.isVerticallyResizable = true
@@ -101,7 +99,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSTextView
     func updateWindowTitle() {
         let fileName = currentFilePath?.lastPathComponent ?? "Untitled"
         let editedIndicator = window.isDocumentEdited ? "*" : ""
-        window.title = "\(editedIndicator)\(fileName) - Notepad"
+        window.title = "\(editedIndicator)\(fileName) - SimpleEdit"
     }
 
     func setupAutoSave() {
@@ -126,9 +124,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSTextView
         let appMenuItem = NSMenuItem()
         mainMenu.addItem(appMenuItem)
         let appMenu = NSMenu()
-        appMenu.addItem(NSMenuItem(title: "About Notepad", action: #selector(showAbout), keyEquivalent: ""))
+        appMenu.addItem(NSMenuItem(title: "About SimpleEdit", action: #selector(showAbout), keyEquivalent: ""))
         appMenu.addItem(NSMenuItem.separator())
-        appMenu.addItem(NSMenuItem(title: "Quit Notepad", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        appMenu.addItem(NSMenuItem(title: "Quit SimpleEdit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         appMenuItem.submenu = appMenu
         
         // File Menu
@@ -140,7 +138,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSTextView
         fileMenu.addItem(NSMenuItem(title: "Save", action: #selector(saveDocument), keyEquivalent: "s"))
         fileMenu.addItem(NSMenuItem(title: "Save As...", action: #selector(saveDocumentAs), keyEquivalent: "S"))
         fileMenu.addItem(NSMenuItem.separator())
-        let autoSaveItem = NSMenuItem(title: "Auto-save", action: #selector(toggleAutoSave), keyEquivalent: "")
+        let autoSaveItem = NSMenuItem(title: "Auto-save", action: #selector(toggleAutoSave), keyEquivalent: "s")
+        autoSaveItem.keyEquivalentModifierMask = [.command, .option]
         autoSaveItem.state = isAutoSaveEnabled ? .on : .off
         fileMenu.addItem(autoSaveItem)
         fileMenuItem.submenu = fileMenu
@@ -234,8 +233,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSTextView
 
     @objc func showAbout() {
         let alert = NSAlert()
-        alert.messageText = "About Notepad"
-        alert.informativeText = "Native macOS Notepad Clone\nBuilt with Swift & AppKit\n\nFeatures: Find/Replace, Word Wrap, Font Persistence, Time/Date Insert, Auto-save, Dark Mode."
+        alert.messageText = "About SimpleEdit"
+        alert.informativeText = "Native macOS SimpleEdit Clone\nBuilt with Swift & AppKit\n\nFeatures: Find/Replace, Word Wrap, Font Persistence, Time/Date Insert, Auto-save, Dark Mode."
         alert.runModal()
     }
     
