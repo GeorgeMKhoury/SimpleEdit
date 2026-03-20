@@ -1,6 +1,6 @@
 # SimpleEdit
 
-A native macOS clone of Notepad built with Swift and SwiftUI.
+A native MacOS clone of Notepad built with Swift and AppKit.
 
 ## Features
 - Find/Replace
@@ -18,7 +18,7 @@ mkdir -p SimpleEdit.app/Contents/MacOS
 mkdir -p SimpleEdit.app/Contents/Resources
 cp Info.plist SimpleEdit.app/Contents/Info.plist
 cp AppIcon.icns SimpleEdit.app/Contents/Resources/AppIcon.icns
-swiftc -parse-as-library SimpleEdit.swift -o SimpleEdit.app/Contents/MacOS/SimpleEdit
+swiftc SimpleEdit.swift -o SimpleEdit.app/Contents/MacOS/SimpleEdit
 ```
 
 ## Running the App
